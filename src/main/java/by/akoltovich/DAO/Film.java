@@ -32,7 +32,8 @@ public class Film {
     @Column(name = "RELEASE_DATE")
     private Date releaseDate;
 
-    public Film(){}
+    public Film() {
+    }
 
     public Film(String name, String genre, Date releaseDate, Director director) {
         this.name = name;
