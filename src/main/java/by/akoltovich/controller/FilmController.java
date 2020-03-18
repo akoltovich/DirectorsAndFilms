@@ -1,7 +1,7 @@
 package by.akoltovich.controller;
 
-import by.akoltovich.DAO.Film;
-import by.akoltovich.repo.FilmRepo;
+import by.akoltovich.domain.Film;
+import by.akoltovich.service.FilmService;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,47 +14,35 @@ import java.util.List;
 
 @RestController
 public class FilmController {
-    private final FilmRepo filmRepo;
 
-    public FilmController(FilmRepo filmRepo) {
-        this.filmRepo = filmRepo;
+    private final FilmService filmService;
+
+    public FilmController(FilmService filmService) {
+        this.filmService = filmService;
     }
 
     @GetMapping("/films")
     public List<Film> getAllFilm() {
-        return filmRepo.findAll();
+        return filmService.getAllFilm();
     }
 
     @GetMapping("/films/byId")
     public Film getFilmById(@RequestBody Long id) {
-        filmRepo.findById(id);
-        if (!filmRepo.findById(id).isPresent()) {
-            throw new NullPointerException();
-        }
-        return filmRepo.findById(id).get();
+        return filmService.getFilmById(id);
     }
 
     @PostMapping("/films/add")
     public Film addFilm(@RequestBody Film film) {
-        return filmRepo.save(film);
+        return filmService.addFilm(film);
     }
 
-    @PutMapping("/update/film")
+    @PutMapping("/films/update")
     public Film updateFilm(@RequestBody Film newFilm, @PathVariable Long id) {
-        return filmRepo.findById(id).map(film -> {
-            newFilm.setDirector(newFilm.getDirector());
-            newFilm.setName(newFilm.getName());
-            newFilm.setGenre(newFilm.getGenre());
-            newFilm.setReleaseDate(newFilm.getReleaseDate());
-            return filmRepo.save(film);
-        }).orElseGet(() -> {
-            newFilm.setId(newFilm.getId());
-            return filmRepo.save(newFilm);
-        });
+        return filmService.updateFilm(newFilm, id);
     }
 
     @DeleteMapping("/films/delete")
     public void deleteFilm(@RequestBody Long id) {
-        filmRepo.deleteById(id);
+        filmService.deleteFilm(id);
     }
 }

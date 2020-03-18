@@ -1,7 +1,7 @@
 package by.akoltovich.controller;
 
-import by.akoltovich.DAO.Director;
-import by.akoltovich.repo.DirectorRepo;
+import by.akoltovich.domain.Director;
+import by.akoltovich.service.DirectorService;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,46 +15,34 @@ import java.util.List;
 @RestController
 public class DirectorController {
 
-    private final DirectorRepo directorRepo;
+    private final DirectorService directorService;
 
-    public DirectorController(DirectorRepo directorRepo) {
-        this.directorRepo = directorRepo;
+    public DirectorController(DirectorService directorService) {
+        this.directorService = directorService;
     }
 
     @GetMapping("/directors")
     public List<Director> getAllDirectors() {
-        return directorRepo.findAll();
+        return directorService.getAllDirectors();
     }
 
     @GetMapping("/directors/byId")
     public Director getDirectorById(@RequestBody Long id) {
-        directorRepo.findById(id);
-        if (!directorRepo.findById(id).isPresent()) {
-            throw new NullPointerException();
-        }
-        return directorRepo.findById(id).get();
+        return directorService.getDirectorById(id);
     }
 
     @PostMapping("/directors/add")
     public Director addDirector(@RequestBody Director director) {
-        return directorRepo.save(director);
+        return directorService.addDirector(director);
     }
 
-    @PutMapping("/directors/change/byId")
+    @PutMapping("/directors/update")
     public Director updateDirector(@RequestBody Director newDirector, @PathVariable Long id) {
-        return directorRepo.findById(id).map(director -> {
-            newDirector.setFirstName(newDirector.getFirstName());
-            newDirector.setLastName(newDirector.getLastName());
-            newDirector.setBirthDate(newDirector.getBirthDate());
-            return directorRepo.save(director);
-        }).orElseGet(() -> {
-            newDirector.setId(newDirector.getId());
-            return directorRepo.save(newDirector);
-        });
+        return directorService.updateDirector(newDirector, id);
     }
 
     @DeleteMapping("/directors/delete")
     public void deleteDirector(@RequestBody Long id) {
-        directorRepo.deleteById(id);
+        directorService.deleteDirector(id);
     }
 }

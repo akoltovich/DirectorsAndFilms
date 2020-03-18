@@ -1,4 +1,4 @@
-package by.akoltovich.DAO;
+package by.akoltovich.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
